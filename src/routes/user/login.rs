@@ -1,6 +1,6 @@
 use rocket::{serde::{json::Json, Deserialize, Serialize}, http::Status, State};
 
-use crate::{database::{diesel::{get_from_pool, DbPool}, models::users::{User, Session}}, logic::auth::auth_user};
+use crate::{database::{diesel::{get_from_pool, DbPool}, models::users::{User, Session, UserInsertable}}, logic::auth::auth_user};
 use diesel::{prelude::*, insert_into, update};
 use crate::database::schema::users::dsl::*;
 use crate::database::schema::sessions::dsl::*;
@@ -71,5 +71,35 @@ pub fn logout(dbpool: &State<DbPool>, user_token: Token) -> Status {
 
     let _ = update(sessions.filter(token.eq_all(&user_token.value))).set(logout_date.eq(chrono::Utc::now().naive_utc()))
     .execute(connection);
+    Status::Ok
+}
+
+#[derive(Deserialize)]
+pub struct RegisterData{
+    username: String,
+    password: String
+}
+
+#[post("/register", format = "json", data = "<data>")]
+pub fn register(dbpool: &State<DbPool>, data: Json<RegisterData>) -> Status {
+    let connection: &mut diesel::r2d2::PooledConnection<diesel::r2d2::ConnectionManager<SqliteConnection>> = &mut get_from_pool(dbpool).unwrap();
+
+    let results = users.filter(username.eq_all(&data.username))
+        .select(User::as_select())
+        .load(connection).unwrap();
+
+    if !results.is_empty() {
+        return Status::Forbidden;
+    }
+
+    let new_user = UserInsertable { 
+        username: data.username.clone(), 
+        password: data.password.clone(),
+    };
+
+    let _ = insert_into(users)
+        .values(new_user)
+        .execute(connection);
+    
     Status::Ok
 }
