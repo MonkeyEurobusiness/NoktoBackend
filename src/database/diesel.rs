@@ -1,5 +1,3 @@
-use diesel::prelude::*;
-use diesel::sqlite;
 use diesel::sqlite::SqliteConnection;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection, PoolError};
 use dotenv::dotenv;
