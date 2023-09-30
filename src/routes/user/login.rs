@@ -55,11 +55,6 @@ pub fn login(dbpool: &State<DbPool>, data: Json<LoginData>) -> Result<Json<Login
     }))
 }
 
-// #[derive(Deserialize)]
-// pub struct LogoutData {
-//     token: String,
-// }
-
 #[post("/logout", format = "json")]
 pub fn logout(dbpool: &State<DbPool>, user_token: Token) -> Status {
     let connection: &mut diesel::r2d2::PooledConnection<diesel::r2d2::ConnectionManager<SqliteConnection>> = &mut get_from_pool(dbpool).unwrap();

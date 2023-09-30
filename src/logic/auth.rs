@@ -1,14 +1,10 @@
-use std::convert::Infallible;
-
 use diesel::SqliteConnection;
-use diesel::{prelude::*, insert_into, update};
+use diesel::prelude::*;
 use rocket::Request;
 use rocket::http::Status;
 // use rocket::http::hyper::{request};
 use rocket::request::{FromRequest, Outcome};
-use crate::database::models::users::SessionAll;
-use crate::database::{diesel::{get_from_pool, DbPool}, models::users::{User, Session}};
-use crate::database::schema::users::dsl::*;
+use crate::database::diesel::{get_from_pool, DbPool};
 use crate::database::schema::sessions::dsl::*;
 
 #[derive(Debug)]
@@ -27,7 +23,7 @@ impl<'r> FromRequest<'r> for Token {
     type Error = TokenError;
 
     async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        fn is_valid(key: &str) -> bool {
+        fn is_valid(_key: &str) -> bool {
             // key == "valid_api_key"
             //TODO
             true
