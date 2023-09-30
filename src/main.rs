@@ -3,6 +3,7 @@ use routes::user;
 
 mod routes;
 mod database;
+mod logic;
 
 #[macro_use] extern crate rocket;
 

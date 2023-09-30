@@ -11,11 +11,21 @@ pub struct User {
 }
 
 
-#[derive(Insertable, Selectable)]
+#[derive(Insertable)]
 #[diesel(table_name = crate::database::schema::sessions)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct Session {
     pub user_id: i32,
     pub token: String,
+    pub logout_date: Option<NaiveDateTime>,
+}
+
+#[derive(Selectable)]
+#[diesel(table_name = crate::database::schema::sessions)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+pub struct SessionAll {
+    pub user_id: i32,
+    pub token: String,
+    pub login_date: NaiveDateTime,
     pub logout_date: Option<NaiveDateTime>,
 }

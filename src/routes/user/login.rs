@@ -1,9 +1,10 @@
 use rocket::{serde::{json::Json, Deserialize, Serialize}, http::Status, State};
 
-use crate::database::{diesel::{get_from_pool, DbPool}, models::users::{User, Session}};
+use crate::{database::{diesel::{get_from_pool, DbPool}, models::users::{User, Session}}, logic::auth::auth_user};
 use diesel::{prelude::*, insert_into, update};
 use crate::database::schema::users::dsl::*;
 use crate::database::schema::sessions::dsl::*;
+use crate::logic::auth::Token;
 
 
 use rand::Rng;
@@ -54,23 +55,26 @@ pub fn login(dbpool: &State<DbPool>, data: Json<LoginData>) -> Result<Json<Login
     }))
 }
 
-#[derive(Deserialize)]
-pub struct LogoutData {
-    token: String,
-}
+// #[derive(Deserialize)]
+// pub struct LogoutData {
+//     token: String,
+// }
 
-#[post("/logout", format = "json", data = "<data>")]
-pub fn logout(dbpool: &State<DbPool>, data: Json<LogoutData>) -> Status {
+#[post("/logout", format = "json")]
+pub fn logout(dbpool: &State<DbPool>, user_token: Token) -> Status {
     let connection: &mut diesel::r2d2::PooledConnection<diesel::r2d2::ConnectionManager<SqliteConnection>> = &mut get_from_pool(dbpool).unwrap();
+    if !auth_user(dbpool, &user_token.value) {
+        return Status::Unauthorized
+    }
 
-    let results: Vec<String> = sessions.filter(token.eq_all(&data.token))
+    let results: Vec<String> = sessions.filter(token.eq_all(&user_token.value))
         .select(token)
         .load(connection).unwrap();
     if results.len() != 1 {
         return Status::InternalServerError;
     }
 
-    let _ = update(sessions.filter(token.eq_all(&data.token))).set(logout_date.eq(chrono::Utc::now().naive_utc()))
+    let _ = update(sessions.filter(token.eq_all(&user_token.value))).set(logout_date.eq(chrono::Utc::now().naive_utc()))
     .execute(connection);
     Status::Ok
 }
