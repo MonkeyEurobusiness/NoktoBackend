@@ -13,3 +13,4 @@ debug/
 /target
 
 /.vscode
+db.sqlite
