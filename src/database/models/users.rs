@@ -27,7 +27,7 @@ pub struct Session {
     pub logout_date: Option<NaiveDateTime>,
 }
 
-#[derive(Selectable)]
+#[derive(Queryable, Selectable)]
 #[diesel(table_name = crate::database::schema::sessions)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct SessionAll {
