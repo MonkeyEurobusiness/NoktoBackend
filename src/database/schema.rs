@@ -6,6 +6,8 @@ diesel::table! {
         user_id -> Integer,
         title -> Text,
         description -> Nullable<Text>,
+        is_dangerous -> Bool,
+        is_abused -> Bool,
         latitude -> Float,
         longitude -> Float,
         image_urls -> Nullable<Text>,

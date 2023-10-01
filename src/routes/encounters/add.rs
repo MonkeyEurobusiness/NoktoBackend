@@ -9,6 +9,8 @@ use crate::logic::auth::Token;
 pub struct AddData{
     title: String,
     description: Option<String>,
+    is_dangerous: bool,
+    is_abused: bool,
     latitude: f32,
     longitude: f32,
     image_urls: Option<String>,
@@ -27,6 +29,8 @@ pub fn add(dbpool: &State<DbPool>, data: Json<AddData>, user_token: Token) -> St
         user_id: user.id,
         title: data.title.clone(),
         description: data.description.clone(),
+        is_dangerous: data.is_dangerous,
+        is_abused: data.is_abused,
         latitude: data.latitude,
         longitude: data.longitude,
         image_urls: data.image_urls.clone(),
