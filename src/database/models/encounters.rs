@@ -1,5 +1,4 @@
-use diesel::{prelude::{Queryable, Insertable}, Selectable};
-use chrono::NaiveDateTime;
+use diesel::prelude::Insertable;
 
 #[derive(Insertable)]
 #[diesel(table_name = crate::database::schema::encounters)]
