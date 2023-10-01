@@ -16,6 +16,6 @@ fn index() -> &'static str {
 fn rocket() -> _ {
     rocket::build().mount("/", routes![index])
     .mount("/user", routes![user::login::login, user::login::logout, user::login::register])
-    .mount("/encounters", routes![encounters::add::add])
+    .mount("/encounters", routes![encounters::add::add, encounters::get::get, encounters::get::get_radius])
     .manage(establish_pooled_connection())
 }

@@ -12,4 +12,4 @@ diesel = { version = "2.1", features = ["sqlite", "r2d2", "chrono"] }
 dotenv = "0.15"
 rand = "0.8"
 # time = "0.3"
-chrono = "0.4"
+chrono = { version = "0.4", features = ["serde"]}
